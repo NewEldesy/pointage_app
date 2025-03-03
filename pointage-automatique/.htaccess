@@ -1,1 +1,22 @@
+# Activer la réécriture d'URL
+RewriteEngine On
 
+# Rediriger tout vers index.php (pour un routing simple)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?url=$1 [L,QSA]
+
+# Protéger les fichiers sensibles
+<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|sql)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Empêcher l'accès aux répertoires sans fichier index
+Options -Indexes
+
+# Protéger contre les attaques XSS et Clickjacking
+<IfModule mod_headers.c>
+    Header set X-XSS-Protection "1; mode=block"
+    Header set X-Frame-Options "DENY"
+</IfModule>
